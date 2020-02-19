@@ -1,0 +1,13 @@
+datasource:
+  master:
+    url: jdbc:mysql://172.16.2.100:3306/feosd_admin?characterEncoding=UTF-8&useUnicode=true&useSSL=false
+    username: xxxx
+    password: xxxx
+  datalog:
+    url: jdbc:mysql://172.16.2.100:3306/feosd_log?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    username: xxxx
+    password: xxxx
+redis:
+  host: 172.16.2.100
+  port: 6379
+  password: xxxxx

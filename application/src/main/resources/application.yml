@@ -1,0 +1,122 @@
+server:
+  port: 20000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics,httptrace
+spring:
+  application:
+    name: admin
+  profiles:
+    active: dev  #dev开发,prod生产
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+        allow:
+      web-stat-filter:
+        enabled: true
+    dynamic:
+      druid: # 全局druid参数，绝大部分值和默认保持一致。(现已支持的参数如下,不清楚含义不要乱设置)
+        # 连接池的配置信息
+        # 初始化大小，最小，最大
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        # 配置获取连接等待超时的时间
+        maxWait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        # 打开PSCache，并且指定每个连接上PSCache的大小
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+        filters: stat,wall,slf4j
+        # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      datasource:
+        master:
+          url: ${datasource.master.url}
+          username: ${datasource.master.username}
+          password: ${datasource.master.password}
+          driver-class-name: com.mysql.jdbc.Driver
+        # 多数据源配置
+        datalog:
+          url: ${datasource.datalog.url}
+          username: ${datasource.datalog.username}
+          password: ${datasource.datalog.password}
+          driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: false
+    hibernate:
+      connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+        use_sql: true
+        hbm2ddl.auto: update
+        query.substitutions: true 1, false 0
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        default_batch_fetch_size: 50
+        order_inserts: true
+        hikari.dataSourceClassName: com.ibm.db2.jcc.DB2SimpleDataSource
+        enable_lazy_load_no_trans: true
+        connection.zeroDateTimeBehavior: convertToNull
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: true
+  activiti:
+    check-process-definitions: false
+  redis:
+    database: 10
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+    pool.max-active: 8
+    pool.max-wait: -1
+    pool.max-idle: 8
+    pool.min-idle: 0
+    timeout: 5000
+auth: # token有效期配置
+  tokenVerify: false # 是否验证token
+  permission: false # 是否启用验证授权
+  clientTokenExpired: default:30m;hzzapp:15d;ydswtapp:15d;
+  token:
+    storage.type: redis #redis、local 如果为redis，请配置 spring.redis 相关参数
+file:
+  upload:
+    types: jpg,jpeg,png,xlsx,xls,docx,doc,pptx,ppt,pdf,txt,mp4,rmvb,wmv,avi,3gp,flv,mov,swf,gif,apk,grb # 文件上传类型限制
+    maxSize: 102400 #文件上传大小限制  单位： KB
+  local:
+    host: http://localhost:20000/api/file/files
+    path: /Users/zhangpw/file # 本地上传文件存放地址
+  qiniu: # 七牛文件服务配置
+    host: http://test.aip.com  # 七牛文件访问路径
+    key: 6Or3ILCzbOH_OZRBlYH89TJ1yzSSlReA0TUjzcrz # 七牛appkey
+    secret: 8OGP354AeQuf_Oh9Hbv676wQ6BsLC1OVEQcaBVun # 七牛appsecret
+    bucket: test # 七牛空间名称
+    zone: huadong # huadong: 华东  huabei 华北 huanan：华南 beimei 北美  xinjiapo 东南亚（新加坡）
+  ueditor:
+    config: config.json
+database:
+  dbType: mysql # 数据库类型
+  domainPackages: org.feosd.admin.system.dao.domain # domain的包路径
+  updateComment: false # 是否更新数据库注释
+data:
+  workerId: 0 # 工作机器ID(0~7)
+  datacenterId: 0 # 数据中心ID(0~7)
+  maxImportNum: 5000 # 单次导入最大行数
